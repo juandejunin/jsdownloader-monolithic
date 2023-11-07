@@ -2,72 +2,37 @@
 <html>
 <head>
   <title>Descargar video de YouTube</title>
-  <style>
-    body {
-      background-color: #333; /* Fondo oscuro */
-      color: #fff; /* Texto blanco */
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-    }
 
-    .container {
-      text-align: center;
-    }
+  <link rel="stylesheet" type="text/css" href="./styles.css">
 
-    h1 {
-      font-size: 24px;
-    }
+  <script>
+    // Function to add event listener to the download button
+    function addDownloadListener() {
+      var downloadButton = document.getElementById('downloadButton');
+      var loadingArrow = document.querySelector('.loading-arrow');
 
-    .form-wrapper {
-      max-width: 400px;
-      padding: 20px;
-      background-color: #757474; /* Fondo del formulario oscuro */
-      border-radius: 5px;
-      display: flex;
-      flex-direction: column;
-      /* justify-content: center; */
-      align-items: flex-start;
-    }
-
-    label {
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
-
-    input[type="text"] {
-      
-      width: 90%;
-      padding: 10px;
-      margin-bottom: 20px;
-      border: none;
-      border-radius: 5px;
-      background-color: #686666; /* Fondo del campo de texto oscuro */
-      color: #fff;
-    }
-
-    button[type="submit"] {
-      background-color: #2d3238; /* Botón azul */
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    @media (max-width: 480px) {
-      /* Estilos para pantallas más pequeñas (responsivo) */
-      .form-wrapper {
-        max-width: 90%; /* Formulario ocupa casi toda la pantalla */
-        padding: 10px;
+      // Function to handle the download button click
+      function handleDownloadClick(event) {
+        event.preventDefault(); // Prevent the form from being submitted
+        loadingArrow.classList.add('rotate'); // Start the animation
+        setTimeout(function () {
+          alert('Descarga completada'); // Simulate the download process
+          // You can perform the actual download or other actions here
+        }, 2000); // Wait for 2 seconds as an example
       }
+
+      // Add the event listener to the download button
+      downloadButton.addEventListener('click', handleDownloadClick, false);
     }
-  </style>
+
+    // Function to be executed when the DOM is loaded
+    function initializePage() {
+      addDownloadListener();
+    }
+
+    // Attach the event listener for when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', initializePage, false);
+  </script>
 </head>
 <body>
   <div class="container">
@@ -76,8 +41,9 @@
       <form action="/download" method="post">
         <label for="videoUrl">URL del video de YouTube:</label>
         <input type="text" name="videoUrl" required><br>
-        <button type="submit">Descargar</button>
+        <button type="submit" id="downloadButton">Descargar</button>
       </form>
+      <div class="loading-arrow"></div>
     </div>
   </div>
 </body>
