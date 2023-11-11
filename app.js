@@ -1,23 +1,22 @@
 const express = require('express');
 const path = require('path');
-const os = require('os');
 const app = express();
 const port = process.env.PORT || 3000;
-// const downloadController = require('./controllers/downloadController');
-const downloadRoutes = require('./src/routes/downloadRoutes'); // Importa el módulo de rutas
+const downloadRoutes = require('./src/routes/downloadRoutes');
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
+// Configura Express para servir archivos estáticos desde el directorio "public"
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Usa las rutas definidas en el módulo downloadRoutes
 app.use('/', downloadRoutes);
 
-app.listen(port, () => {
-  console.log(`La aplicación está escuchando en el puerto ${port}`);
+// Ruta raíz que responde con "index.html" desde el directorio "public"
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-
+app.listen(port, () => {
+  console.log(`Servidor escuchando en http://localhost:${port}`);
+});
