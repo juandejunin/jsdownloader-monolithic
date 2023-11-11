@@ -2,37 +2,7 @@
 <html>
 <head>
   <title>Descargar video de YouTube</title>
-
-  <link rel="stylesheet" type="text/css" href="./styles.css">
-
-  <script>
-    // Function to add event listener to the download button
-    function addDownloadListener() {
-      var downloadButton = document.getElementById('downloadButton');
-      var loadingArrow = document.querySelector('.loading-arrow');
-
-      // Function to handle the download button click
-      function handleDownloadClick(event) {
-        event.preventDefault(); // Prevent the form from being submitted
-        loadingArrow.classList.add('rotate'); // Start the animation
-        setTimeout(function () {
-          alert('Descarga completada'); // Simulate the download process
-          // You can perform the actual download or other actions here
-        }, 2000); // Wait for 2 seconds as an example
-      }
-
-      // Add the event listener to the download button
-      downloadButton.addEventListener('click', handleDownloadClick, false);
-    }
-
-    // Function to be executed when the DOM is loaded
-    function initializePage() {
-      addDownloadListener();
-    }
-
-    // Attach the event listener for when the DOM is loaded
-    document.addEventListener('DOMContentLoaded', initializePage, false);
-  </script>
+  <link rel="stylesheet" type="text/css" href="/styles.css">
 </head>
 <body>
   <div class="container">
@@ -46,5 +16,7 @@
       <div class="loading-arrow"></div>
     </div>
   </div>
+  <!-- Incluye el archivo JavaScript externo -->
+  <script src="script.js"></script>
 </body>
 </html>
