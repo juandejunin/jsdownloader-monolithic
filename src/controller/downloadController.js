@@ -1,14 +1,9 @@
+// downloadController.js
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs').promises;
 const youtubeDl = require('youtube-dl-exec');
 const os = require('os');
-
-
-
 const axios = require('axios');
-const ffmpeg = require('fluent-ffmpeg');
-
-
 
 // Función para obtener la carpeta de descargas predeterminada del sistema
 function getDefaultDownloadDir() {
@@ -23,11 +18,8 @@ function getDefaultDownloadDir() {
   }
 }
 
-// Controlador de descarga
-const downloadVideo = async (req, res) => {
-  const videoUrl = req.body.videoUrl;
-
-async function obtenerTituloLimpiado() {
+// Función para obtener el título limpiado
+async function obtenerTituloLimpiado(videoUrl) {
   try {
     const response = await axios.get(videoUrl);
     const titleMatch = response.data.match(/<title>([^<]*)<\/title>/);
@@ -41,77 +33,32 @@ async function obtenerTituloLimpiado() {
     }
   } catch (error) {
     console.error('Error al obtener el título del video:', error);
-    return null;
+    throw error;
   }
 }
-const cleanTitle = await obtenerTituloLimpiado();
-console.log(cleanTitle)
-  try {
-    // Utilizamos la carpeta de descargas predeterminada del sistema como destino.
-    const outputDir = getDefaultDownloadDir();
 
-    await fs.promises.mkdir(outputDir, { recursive: true });
+// Función para descargar el video
+async function descargarVideo(videoUrl, cleanTitle, outputDir) {
+  try {
+    await fs.mkdir(outputDir, { recursive: true });
 
     const webmOptions = {
-      o: path.join(outputDir,cleanTitle),
+      o: path.join(outputDir, `${cleanTitle}.webm`),
       format: 'best',
     };
 
     const webmOutput = await youtubeDl(videoUrl, webmOptions);
     console.log('Video descargado en formato original:', webmOutput);
 
-    res.send('Descarga completada en el formato original.');
+    return `${cleanTitle}.webm`;
   } catch (error) {
     console.error('Error en la descarga de video:', error);
-    res.status(500).send('Error en la descarga de video.');
+    throw error;
   }
-};
+}
 
 module.exports = {
-  downloadVideo,
+  getDefaultDownloadDir,
+  obtenerTituloLimpiado,
+  descargarVideo,
 };
-
-
-
-
-
-
-
-// async function descargarAudio() {
-//   const cleanTitle = await obtenerTituloLimpiado();
-
-//   if (cleanTitle) {
-//     try {
-//       await fs.mkdir(outputDir, { recursive: true });
-
-//       const webmOptions = {
-//         o: path.join(outputDir, `${cleanTitle}.webm`),
-//         format: 'bestaudio/best',
-//       };
-
-//       const webmOutput = await youtubeDl(url, webmOptions);
-//       console.log('Audio webm descargado:', webmOutput);
-
-//       const mp3Filename = path.join(outputDir, `${cleanTitle}.mp3`);
-
-//       ffmpeg()
-//         .input(path.join(outputDir, `${cleanTitle}.webm`))
-//         .audioCodec('libmp3lame')
-//         .audioBitrate(320)
-//         .outputOptions('-map_metadata 0')
-//         .toFormat('mp3')
-//         .on('end', () => console.log('Conversión a MP3 exitosa.'))
-//         .on('error', (err) => console.error('Error en la conversión a MP3:', err))
-//         .save(mp3Filename);
-
-//       return mp3Filename; // Puedes devolver información adicional si es necesario.
-//     } catch (error) {
-//       console.error('Error al descargar y convertir el audio a MP3:', error);
-//       throw error; // Puedes relanzar el error si es necesario.
-//     }
-//   }
-// }
-
-// module.exports = {
-//   downloadVideo: descargarAudio,
-// };
