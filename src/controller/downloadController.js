@@ -8,15 +8,7 @@ const ffmpeg = require('fluent-ffmpeg');
 
 // Función para obtener la carpeta de descargas predeterminada del sistema
 function getDefaultDownloadDir() {
-  const platform = os.platform();
-
-  if (platform === 'win32') {
-    return path.join(os.homedir(), 'Downloads');
-  } else if (platform === 'darwin') {
-    return path.join(os.homedir(), 'Downloads');
-  } else {
-    return path.join(os.homedir(), 'Descargas');
-  }
+return path.join(__dirname, '../downloads');
 }
 
 // Función para obtener el título limpiado
@@ -98,5 +90,5 @@ async function descargarFormato(videoUrl, cleanTitle, outputDir, formato) {
 module.exports = {
   getDefaultDownloadDir,
   obtenerTituloLimpiado,
-   descargarFormato
+  descargarFormato
 };
