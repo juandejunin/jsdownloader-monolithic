@@ -4,6 +4,7 @@ const fs = require('fs').promises;
 const youtubeDl = require('youtube-dl-exec');
 const os = require('os');
 const axios = require('axios');
+const ffmpeg = require('fluent-ffmpeg');
 
 // Función para obtener la carpeta de descargas predeterminada del sistema
 function getDefaultDownloadDir() {
@@ -37,22 +38,59 @@ async function obtenerTituloLimpiado(videoUrl) {
   }
 }
 
-// Función para descargar el video
-async function descargarVideo(videoUrl, cleanTitle, outputDir) {
+async function descargarFormato(videoUrl, cleanTitle, outputDir, formato) {
   try {
     await fs.mkdir(outputDir, { recursive: true });
 
-    const webmOptions = {
-      o: path.join(outputDir, `${cleanTitle}.webm`),
-      format: 'best',
-    };
+    let formatoOptions;
+    let extension;
 
-    const webmOutput = await youtubeDl(videoUrl, webmOptions);
-    console.log('Video descargado en formato original:', webmOutput);
+    if (formato === 'mp3') {
+      formatoOptions = {
+        o: path.join(outputDir, `${cleanTitle}.webm`),
+        format: 'bestaudio/best',
+      };
+      extension = 'mp3';
+    } else {
+      formatoOptions = {
+        o: path.join(outputDir, `${cleanTitle}.mp4`),
+        format: 'best',
+      };
+      extension = 'mp4';
+    }
 
-    return `${cleanTitle}.webm`;
+    const formatoOutput = await youtubeDl(videoUrl, formatoOptions);
+
+    console.log(`${formato.toUpperCase()} descargado:`, formatoOutput);
+
+    const formatoFilename = path.join(outputDir, `${cleanTitle}.${extension}`);
+
+    console.log(formatoFilename);
+
+    // Realiza la conversión a MP3 para formatos diferentes de mp3.
+    if (formato === 'mp3') {
+      await new Promise((resolve, reject) => {
+        ffmpeg()
+          .input(path.join(outputDir, `${cleanTitle}.webm`))
+          .audioCodec('libmp3lame')
+          .audioBitrate(320)
+          .outputOptions('-map_metadata 0')
+          .toFormat('mp3')
+          .on('end', () => {
+            console.log('Conversión a MP3 exitosa.');
+            resolve();
+          })
+          .on('error', (err) => {
+            console.error('Error en la conversión a MP3: ' + err);
+            reject(err);
+          })
+          .save(formatoFilename);
+      });
+    }
+
+    return `${cleanTitle}.${extension}`;
   } catch (error) {
-    console.error('Error en la descarga de video:', error);
+    console.error(`Error al descargar y convertir el ${formato}:`, error);
     throw error;
   }
 }
@@ -60,5 +98,5 @@ async function descargarVideo(videoUrl, cleanTitle, outputDir) {
 module.exports = {
   getDefaultDownloadDir,
   obtenerTituloLimpiado,
-  descargarVideo,
+   descargarFormato
 };
