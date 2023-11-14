@@ -8,7 +8,7 @@ const ffmpeg = require('fluent-ffmpeg');
 
 // Función para obtener la carpeta de descargas predeterminada del sistema
 function getDefaultDownloadDir() {
-  return path.join(__dirname, '../downloads');
+return path.join(__dirname, '../downloads');
 }
 
 // Función para obtener el título limpiado

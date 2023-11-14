@@ -1,6 +1,9 @@
 # Use the official Node.js image as a base image
 FROM node:18
 
+# Instalar ffmpeg y otras dependencias del sistema
+RUN apt-get update && apt-get install -y ffmpeg
+
 # Create and set the working directory
 WORKDIR /app
 
